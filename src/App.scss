@@ -1,0 +1,81 @@
+$button: 'grey';
+
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+  background-color: #dddddd;
+}
+
+.container {
+  background-color: #000000;
+  width: 360px;
+  height: 425px;
+  outline: 5px solid #818181;
+  display: flex;
+  flex-direction: column;
+
+  .buttons {
+    position: relative;
+    display: flex;
+    justify-content: center;
+
+  }
+
+  #display {
+    color: white;
+    text-align: end;
+    padding-right: 25px;
+    font-size: 32px;
+    font-family: 'Wallpoet', 'Fredericka the Great';
+    
+  }
+
+  #displayOut {
+    color: orange;
+    text-align: end;
+    padding-right: 25px;
+    font-size: 20px;
+    height: 30px;
+    font-family: 'Wallpoet', 'Fredericka the Great';
+    overflow-wrap: normal;
+  }
+
+  button {
+    position: relative;
+    outline: 1px solid black;
+    border: none;
+    width: 80px;
+    height: 60px;
+    background: $button;
+    font-family: 'Orbitron';
+    font-size: 20px;
+    cursor: default;
+    margin: 1px;
+
+    &:hover {
+      color: black;
+      outline: 0.05em solid grey;
+
+    }
+
+  }
+
+  #equals {
+    position: absolute;
+    height: 120px;
+    right: 20px;
+    bottom: 0;
+
+  }
+
+  #clear {
+    width: 160px;
+  }
+
+  #zero {
+    width: 160px;
+  }
+}

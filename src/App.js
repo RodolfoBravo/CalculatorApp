@@ -1,25 +1,289 @@
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import React from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+let dataInput = '';
+let dataOut = '';
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentValue: '0',
+      previusValue: '',
+      displayOut: ''
+    };
+    this.handledAddNumber = this.handledAddNumber.bind(this);
+    this.handledAddOperator = this.handledAddOperator.bind(this);
+    this.handledResult = this.handledResult.bind(this);
+    this.initialValues = this.initialValues.bind(this);
+  }
+
+  messageWarning() {
+    this.setState({
+      currentValue: 'Digit Limit Met'
+    })
+    setTimeout(() => this.setState({ currentValue: dataInput }), 500);
+  }
+
+  handledResult() {
+    let expression = dataOut;
+    let dataResult = eval(expression);
+    this.setState({
+
+      currentValue: dataResult
+    })
+    dataOut = '';
+    dataInput = '';
+  }
+
+  handledAddOperator(event) {
+    if (this.state.currentValue !== event.target.value) {
+      if (dataInput.length == 0) {
+        this.setState({
+          currentValue: event.target.value,
+          displayOut: dataOut += event.target.value
+        });
+      } else {
+        dataOut += event.target.value;
+        dataInput = ''
+        this.setState({
+          currentValue: event.target.value,
+          previusValue: this.state.currentValue,
+          displayOut: dataOut,
+        });
+      }
+
+    }
+
+  }
+
+  handledAddNumber(event) {
+    if (dataInput.length >= 12) {
+      this.messageWarning();
+    } else {
+
+      if (this.state.currentValue === '0' && this.state.previusValue === '') {
+        dataInput += event.target.value;
+        this.setState({
+          currentValue: event.target.value,
+          displayOut: dataOut += event.target.value
+        });
+
+      } else {
+        dataInput += event.target.value;
+        dataOut += event.target.value;
+        this.setState({
+          previusValue: this.state.currentValue,
+          currentValue: dataInput,
+          displayOut: dataOut
+        })
+      }
+
+
+    }
+
+
+
+  }
+
+  initialValues() {
+    dataInput = '';
+    dataOut = '';
+    this.setState({
+      currentValue: '0',
+      previusValue: '',
+      displayOut: ''
+    })
+  }
+
+  render() {
+    //you can write script 
+
+    return (
+      <main className='container'>
+
+        <div className='row'>
+          <DisplayHistoric textOut={this.state.displayOut} />
+        </div>
+        <div className='row '>
+          <DisplayInput textIn={this.state.currentValue} />
+        </div>
+        <div className='row buttons'>
+          <Buttons
+            addNumber={this.handledAddNumber}
+            reset={this.initialValues}
+            addOperator={this.handledAddOperator}
+            result={this.handledResult} />
+        </div>
+      </main>
+    );
+  }
+}
+
+class Buttons extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    //you can write script 
+
+    return (
+      <div className="row">
+        <button
+          className='btn btn-danger'
+          id="clear"
+          onClick={this.props.reset}>
+          AC
+        </button>
+        <button
+          className='btn btn-secondary'
+          id="divide"
+          onClick={this.props.addOperator}
+          value="/">
+          /
+        </button>
+        <button
+          className='btn btn-secondary'
+          id="multiply"
+          onClick={this.props.addOperator}
+          value="*">
+          x
+        </button>
+
+        <button
+          className='btn btn-light'
+          id="seven"
+          onClick={this.props.addNumber}
+          value="7">
+          7
+        </button>
+        <button
+          className='btn btn-light'
+          id="eight"
+          onClick={this.props.addNumber}
+          value="8">
+          8
+        </button>
+        <button
+          className='btn btn-light'
+          id="nine"
+          onClick={this.props.addNumber}
+          value="9">
+          9
+        </button>
+        <button
+          className='btn btn-secondary'
+          id="subtract"
+          onClick={this.props.addOperator}
+          value="-">
+          -
+        </button>
+
+        <button
+          className='btn btn-light'
+          id="four"
+          onClick={this.props.addNumber}
+          value="4">
+          4
+        </button>
+        <button
+          className='btn btn-light'
+          id="five"
+          onClick={this.props.addNumber}
+          value="5">
+          5
+        </button>
+        <button
+          className='btn btn-light'
+          id="six"
+          onClick={this.props.addNumber}
+          value="6">
+          6
+        </button>
+        <button
+          className='btn btn-secondary'
+          id="add"
+          onClick={this.props.addOperator}
+          value="+">
+          +
+        </button>
+
+
+        <button className='btn btn-light'
+          id="one"
+          onClick={this.props.addNumber}
+          value="1">
+          1
+        </button>
+        <button
+          className='btn btn-light'
+          id="two"
+          onClick={this.props.addNumber}
+          value="2">
+          2
+        </button>
+        <button
+          className='btn btn-light'
+          id="three"
+          onClick={this.props.addNumber}
+          value="3">
+          3
+        </button>
+
+        <button
+          className='btn btn-light'
+          id="zero"
+          onClick={this.props.addNumber}
+          value="0">
+          0
+        </button>
+        <button className='btn btn-light' id="decimal">.</button>
+
+        <button
+          className='btn btn-primary'
+          id="equals"
+          onClick={this.props.result}>
+          =
+        </button>
+
+      </div>
+    );
+  }
+}
+
+class DisplayInput extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    //you can write script 
+
+    return (
+      <div className='col' id='display'>
+        {this.props.textIn}
+      </div>
+    );
+  }
+}
+
+class DisplayHistoric extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    //you can write script 
+
+    return (
+      <div className='col' id='displayOut'>
+        {this.props.textOut}
+      </div>
+    );
+  }
 }
 
 export default App;
