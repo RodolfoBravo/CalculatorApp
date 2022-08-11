@@ -14,10 +14,12 @@ class App extends React.Component {
       previusValue: '',
       displayOut: ''
     };
+
+    this.initialValues = this.initialValues.bind(this);
     this.handledAddNumber = this.handledAddNumber.bind(this);
     this.handledAddOperator = this.handledAddOperator.bind(this);
     this.handledResult = this.handledResult.bind(this);
-    this.initialValues = this.initialValues.bind(this);
+    this.handledAddDecimal = this.handledAddDecimal.bind(this);
   }
 
   messageWarning() {
@@ -29,13 +31,25 @@ class App extends React.Component {
 
   handledResult() {
     let expression = dataOut;
+    if (1) {
     let dataResult = eval(expression);
     this.setState({
-
-      currentValue: dataResult
+      currentValue: dataResult,
+      displayOut: expression +"="+dataResult
     })
-    dataOut = '';
-    dataInput = '';
+  }
+    
+  }
+
+  handledAddDecimal(event) {
+    console.log(this.state.currentValue);
+    if (! this.state.currentValue.includes(".")) {
+      dataInput = this.state.currentValue += event.target.value;
+      this.setState({
+        currentValue: dataInput,
+        displayOut: dataOut += event.target.value
+      });
+    }
   }
 
   handledAddOperator(event) {
@@ -91,6 +105,7 @@ class App extends React.Component {
   initialValues() {
     dataInput = '';
     dataOut = '';
+    
     this.setState({
       currentValue: '0',
       previusValue: '',
@@ -115,6 +130,7 @@ class App extends React.Component {
             addNumber={this.handledAddNumber}
             reset={this.initialValues}
             addOperator={this.handledAddOperator}
+            addDecimal={this.handledAddDecimal}
             result={this.handledResult} />
         </div>
       </main>
@@ -240,7 +256,13 @@ class Buttons extends React.Component {
           value="0">
           0
         </button>
-        <button className='btn btn-light' id="decimal">.</button>
+        <button
+          className='btn btn-light'
+          id="decimal"
+          onClick={this.props.addDecimal}
+          value=".">
+          .
+        </button>
 
         <button
           className='btn btn-primary'
