@@ -12,7 +12,8 @@ class App extends React.Component {
     this.state = {
       currentValue: '0',
       previusValue: '',
-      displayOut: ''
+      displayOut: '',
+      isDone: false
     };
 
     this.initialValues = this.initialValues.bind(this);
@@ -32,18 +33,19 @@ class App extends React.Component {
   handledResult() {
     let expression = dataOut;
     if (1) {
-    let dataResult = eval(expression);
-    this.setState({
-      currentValue: dataResult,
-      displayOut: expression +"="+dataResult
-    })
-  }
-    
+      let dataResult = eval(expression);
+      this.setState({
+        currentValue: dataResult,
+        displayOut: expression + "=" + dataResult,
+        isDone: true
+      })
+    }
+
   }
 
   handledAddDecimal(event) {
     console.log(this.state.currentValue);
-    if (! this.state.currentValue.includes(".")) {
+    if (!this.state.currentValue.includes(".")) {
       dataInput = this.state.currentValue += event.target.value;
       this.setState({
         currentValue: dataInput,
@@ -53,22 +55,45 @@ class App extends React.Component {
   }
 
   handledAddOperator(event) {
+    var disOut = this.state.displayOut;
+    var lastLetter;
+    var flag = false;
+    if (lastLetter == undefined) {
+      lastLetter = event.target.value;
+    }
+
     if (this.state.currentValue !== event.target.value) {
       if (dataInput.length == 0) {
+        dataInput = event.target.value;
         this.setState({
           currentValue: event.target.value,
           displayOut: dataOut += event.target.value
         });
       } else {
-        dataOut += event.target.value;
-        dataInput = ''
-        this.setState({
-          currentValue: event.target.value,
-          previusValue: this.state.currentValue,
-          displayOut: dataOut,
-        });
+        if (this.state.isDone) {
+          dataOut = this.state.currentValue;
+          this.setState({
+            displayOut: this.state.currentValue,
+            isDone: false
+          });
+        }
+        console.log(lastLetter)
+        console.log(lastLetter.includes('+'));
+        console.log(lastLetter.includes('/'));
+        console.log(lastLetter.includes('*'));
+        console.log((lastLetter.includes('+') || lastLetter.includes('/') || lastLetter.includes('*') || flag))
+        if (1){//(!(lastLetter.includes('+') || lastLetter.includes('/') || lastLetter.includes('*') || flag)) {
+          dataOut += event.target.value;
+          dataInput = '';
+          flag = true;
+          this.setState({
+            currentValue: event.target.value,
+            previusValue: this.state.currentValue,
+            displayOut: event.target.value,
+          });
+        } 
       }
-
+      lastLetter = disOut[disOut.length - 1];
     }
 
   }
@@ -77,15 +102,19 @@ class App extends React.Component {
     if (dataInput.length >= 12) {
       this.messageWarning();
     } else {
-
-      if (this.state.currentValue === '0' && this.state.previusValue === '') {
+      console.log(this.state.displayOut.length);
+      if (this.state.currentValue === '0' && this.state.previusValue === '' && event.target.value != '0') {
+        console.log('fisrt');
         dataInput += event.target.value;
         this.setState({
           currentValue: event.target.value,
           displayOut: dataOut += event.target.value
         });
 
-      } else {
+      } else if (this.state.displayOut.length >= 1) {
+        if (this.state.isDone) {
+          this.initialValues();
+        }
         dataInput += event.target.value;
         dataOut += event.target.value;
         this.setState({
@@ -93,7 +122,9 @@ class App extends React.Component {
           currentValue: dataInput,
           displayOut: dataOut
         })
+
       }
+
 
 
     }
@@ -105,11 +136,12 @@ class App extends React.Component {
   initialValues() {
     dataInput = '';
     dataOut = '';
-    
+
     this.setState({
       currentValue: '0',
       previusValue: '',
-      displayOut: ''
+      displayOut: '',
+      isDone: false
     })
   }
 
