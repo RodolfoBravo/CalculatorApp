@@ -5,6 +5,8 @@ import React from 'react';
 
 let dataInput = '';
 let dataOut = '';
+let flagLess = false;
+let flagConc = false;
 
 class App extends React.Component {
   constructor(props) {
@@ -32,14 +34,13 @@ class App extends React.Component {
 
   handledResult() {
     let expression = dataOut;
-    if (1) {
-      let dataResult = eval(expression);
-      this.setState({
-        currentValue: dataResult,
-        displayOut: expression + "=" + dataResult,
-        isDone: true
-      })
-    }
+    let dataResult = eval(expression);
+    this.setState({
+      currentValue: dataResult,
+      displayOut: expression + "=" + dataResult,
+      isDone: true
+    })
+
 
   }
 
@@ -55,45 +56,98 @@ class App extends React.Component {
   }
 
   handledAddOperator(event) {
-    var disOut = this.state.displayOut;
-    var lastLetter;
-    var flag = false;
-    if (lastLetter == undefined) {
-      lastLetter = event.target.value;
-    }
-
     if (this.state.currentValue !== event.target.value) {
-      if (dataInput.length == 0) {
+      if (this.state.currentValue === '0' && this.state.previusValue === '') {
+        console.log('first operator');
         dataInput = event.target.value;
+        dataOut = event.target.value;
+        console.log('first lastletter ' + dataOut);
+        if (dataInput == '-') {
+          flagLess = true;
+        }
         this.setState({
-          currentValue: event.target.value,
-          displayOut: dataOut += event.target.value
+          currentValue: dataInput,
+          displayOut: dataOut
         });
       } else {
         if (this.state.isDone) {
           dataOut = this.state.currentValue;
+          console.log(dataOut + ' rodo');
           this.setState({
             displayOut: this.state.currentValue,
             isDone: false
           });
         }
-        console.log(lastLetter)
-        console.log(lastLetter.includes('+'));
-        console.log(lastLetter.includes('/'));
-        console.log(lastLetter.includes('*'));
-        console.log((lastLetter.includes('+') || lastLetter.includes('/') || lastLetter.includes('*') || flag))
-        if (1){//(!(lastLetter.includes('+') || lastLetter.includes('/') || lastLetter.includes('*') || flag)) {
+        console.log(dataOut);
+        if (flagConc) {
+          var lastLetter = dataOut.toString().slice(-2);
+        }
+        else {
+          var lastLetter = dataOut.toString().slice(-1);
+        }
+        if (lastLetter == undefined) {
+          lastLetter = event.target.value;
+        }
+        console.log('last: ' + lastLetter)
+        console.log(!(lastLetter.includes('+') || lastLetter.includes('/') || lastLetter.includes('*')))
+        if (!(lastLetter.includes('+') || lastLetter.includes('/') || lastLetter.includes('*') || flagLess)) {
+          console.log('firts condition');
           dataOut += event.target.value;
           dataInput = '';
-          flag = true;
           this.setState({
             currentValue: event.target.value,
             previusValue: this.state.currentValue,
-            displayOut: event.target.value,
+            displayOut: dataOut,
           });
-        } 
+
+          if (event.target.value == '-') {
+            flagLess = true;
+          }
+        } else {
+          if (event.target.value == '-' && !flagLess) {
+            console.log('condicion less');
+            if (dataOut.length > 1 && !event.target.value.includes('-')) {
+              dataOut = dataOut.slice(0, -1) + event.target.value;
+            } else if (dataOut.length > 1 && event.target.value.includes('-')) {
+              dataOut += event.target.value;
+              flagConc = true;
+            } else {
+              dataOut = event.target.value;
+            }
+
+            flagLess = true;
+            this.setState({
+              currentValue: event.target.value,
+              previusValue: this.state.currentValue,
+              displayOut: dataOut,
+            });
+          } else {
+            let dt;
+            if (lastLetter.includes('+-') || lastLetter.includes('/-') || lastLetter.includes('*-')) {
+              dt = dataOut.slice(0, -2) + event.target.value;
+              console.log('dt slice');
+            } else if ((lastLetter.includes('+') || lastLetter.includes('/') || lastLetter.includes('*') || lastLetter.includes('-'))) {
+              console.log('condition two operators')
+              flagConc = false;
+              dt = dataOut.slice(0, -1) + event.target.value;
+            }
+            else {
+              dt = dataOut += event.target.value;
+              console.log('dt +=');
+            }
+            dataOut = dt;
+            console.log('condicion else');
+            flagLess = false;
+            this.setState({
+              currentValue: event.target.value,
+              previusValue: this.state.currentValue,
+              displayOut: dataOut,
+            });
+
+          }
+        }
       }
-      lastLetter = disOut[disOut.length - 1];
+
     }
 
   }
@@ -102,13 +156,15 @@ class App extends React.Component {
     if (dataInput.length >= 12) {
       this.messageWarning();
     } else {
-      console.log(this.state.displayOut.length);
+      //console.log(this.state.displayOut.length);
+      flagConc = false;
       if (this.state.currentValue === '0' && this.state.previusValue === '' && event.target.value != '0') {
-        console.log('fisrt');
-        dataInput += event.target.value;
+        console.log('fisrt number');
+        dataInput = event.target.value;
+        dataOut = event.target.value;
         this.setState({
-          currentValue: event.target.value,
-          displayOut: dataOut += event.target.value
+          currentValue: dataInput,
+          displayOut: dataOut
         });
 
       } else if (this.state.displayOut.length >= 1) {
@@ -136,6 +192,7 @@ class App extends React.Component {
   initialValues() {
     dataInput = '';
     dataOut = '';
+    flagLess = false;
 
     this.setState({
       currentValue: '0',

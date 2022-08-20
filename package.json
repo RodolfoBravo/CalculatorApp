@@ -1,5 +1,7 @@
 {
   "name": "calculator-app",
+  "author":"Rodolfo Bravo",
+  "description": "this is an app of calculator",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
